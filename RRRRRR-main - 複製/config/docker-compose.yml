@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: school_system_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: school_system
+    volumes:
+      - mongodb_data:/data/db
+      - ../mongodb/init:/docker-entrypoint-initdb.d
+    networks:
+      - school_network
+
+  python_backend:
+    build:
+      context: ../backend
+      dockerfile: ../config/Dockerfile.python
+    container_name: school_system_python
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URL=mongodb://admin:admin123@mongodb:27017/school_system?authSource=admin
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    networks:
+      - school_network
+    volumes:
+      - ../backend:/app
+    
+  nginx:
+    image: nginx:alpine
+    container_name: school_system_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../:/usr/share/nginx/html
+    depends_on:
+      - python_backend
+    networks:
+      - school_network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  school_network:
+    driver: bridge

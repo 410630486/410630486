@@ -1,0 +1,42 @@
+{
+  "name": "school-system",
+  "version": "1.0.0",
+  "description": "校務系統網站",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "init-db": "node database/simple_db.js",
+    "mongo:start": "docker-compose up -d mongodb",
+    "mongo:stop": "docker-compose stop mongodb",
+    "mongo:logs": "docker-compose logs -f mongodb",
+    "mongo:reset": "docker-compose down mongodb && docker-compose up -d mongodb",
+    "mongo:shell": "docker exec -it school_system_mongodb mongosh --username admin --password admin123 --authenticationDatabase admin school_system",
+    "system:start": "npm run mongo:start && npm start",
+    "system:stop": "npm run mongo:stop",
+    "system:restart": "npm run mongo:reset && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "校務系統",
+    "mongodb",
+    "express",
+    "nodejs",
+    "student-api",
+    "authentication"
+  ],
+  "author": "School System Developer",
+  "license": "MIT"
+}
